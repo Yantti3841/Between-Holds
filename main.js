@@ -126,7 +126,7 @@ function showQuestion(){
   $('#quiz-instruction').textContent=t(math?'quizMathHelp':'quizPictureHelp');
   $('#question-picture').hidden=!math;$('#question-picture').innerHTML=math?imgHTML(q):'';
   $('#answers').innerHTML=q.choices.map((ch,i)=>`<button class="answer ${math?'number-answer':'picture-answer'}" data-answer="${i}" data-pad="A" aria-label="${math?(settings.language==='en'?'Answer ':'答案 '):''}${math?ch.label:labelFor(ch,settings.language)}">${math?pixelText(ch.value,ch.label):imgHTML(ch)}</button>`).join('');
-  $('#answer-status').textContent='';$('#forgot').hidden=false;$('#next-question').hidden=true;
+  $('#answer-status').textContent='';$('#answer-status').style.color='';$('#forgot').hidden=false;$('#next-question').hidden=true;
   $$('[data-answer]').forEach(b=>b.onclick=()=>answer(Number(b.dataset.answer)));
   $('#forgot').onclick=()=>answer(-1);
   $('#answers button').focus({preventScroll:true});
@@ -135,9 +135,10 @@ function answer(index){
   if(answers.length>questionIndex)return;
   const q=questions[questionIndex],math=q.category==='math',correct=index>=0&&!!q.choices[index].correct;
   answers.push({id:q.id,index,correct});
-  $$('[data-answer]').forEach((b,i)=>{b.disabled=true;b.classList.toggle('selected',index===i);});
+  $$('[data-answer]').forEach((b,i)=>{b.disabled=true;b.classList.toggle('selected',index===i&&!correct);b.classList.toggle('correct',index===i&&correct);});
   $('#forgot').hidden=true;
-  $('#answer-status').textContent=t('answerGood');
+  $('#answer-status').textContent=settings.language==='en'?(index<0?'No answer.':correct?'Correct!':'Incorrect.'):(index<0?'本题未作答。':correct?'答对了！':'答错了。');
+  $('#answer-status').style.color=correct?'#53836b':'#b7593c';
   $('#next-question').hidden=false;$('#next-question').textContent=t(questionIndex===questions.length-1?'seeResult':'next');
   $('#next-question').focus();sound.chime('memory');
 }
