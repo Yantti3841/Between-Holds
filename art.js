@@ -50,11 +50,12 @@ export class World{
   targetScreen(){return this.toScreen(this.run?targetGrip(this.run):{x:0,y:0});}
   visible(){return this.run?visibleRocks(this.run,this.total).filter(p=>{const s=this.toScreen(p);return s.y>-20&&s.y<this.h+20;}):[];}
   aimAt(x,y,keyboard=false){
-    if(!this.run)return;const l=this.layout();
+    if(!this.run)return;
     this.pointer=keyboard?null:{x,y};this.run.inputMode=keyboard?'keyboard':'pointer';
-    const p=keyboard||this.run.charging?targetGrip(this.run):{x:(x-l.width*.67)/l.scale+this.cameraX,y:(y-l.anchor)/l.scale-this.camera};
-    const target=targetGrip(this.run),radius=hitRadius(target),d=Math.hypot(p.x-target.x,p.y-target.y),snap=keyboard?1:d<radius?(.22*(1-d/radius)):0;
-    this.run.aim={x:p.x+(target.x-p.x)*snap,y:p.y+(target.y-p.y)*snap};
+    // Each route step has one valid paired hold. Keep it selected before the
+    // press so the player can charge immediately instead of visibly aiming at
+    // a wrong point and snapping across only after input begins.
+    this.run.aim=targetGrip(this.run);
   }
   environment(c,width,h,play,dt){
     const a=this.art;
