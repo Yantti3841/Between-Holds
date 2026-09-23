@@ -132,7 +132,7 @@ export class World{
       this.hover=damp(this.hover,distance<hitRadius(target)?1:0,9,this.paused?0:dt);
       const l=this.layout();c.save();c.translate(width*.67-this.cameraX*l.scale,l.anchor+this.camera*l.scale);c.scale(l.scale,l.scale);c.imageSmoothingEnabled=false;
       for(const p of visibleRocks(run,this.total)){
-        const n=p.level,current=n===run.level+1&&p.side===run.activeHand,size=CLIMB.holdScale[p.size];
+        const n=p.level,current=['idle','charge'].includes(run.motion)&&n===run.level+1&&p.side===run.activeHand,size=CLIMB.holdScale[p.size];
         const screenY=l.anchor+(p.y+this.camera)*l.scale;
         const fade=clamp((screenY+25)/75)*clamp((h+25-screenY)/65);
         c.globalAlpha=fade*(n>run.level+1?.63:1);

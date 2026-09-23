@@ -3,7 +3,7 @@ import {createRoute,pointAt,targetHold,targetGrip,grip,span} from './route.js';
 import {createMemories,EXPOSURE} from './memories.js';
 export {createMemories,EXPOSURE,QUIZ_COUNT,quizFor} from './memories.js';
 export const LIMIT=65,COUNT=10;
-export function newRun(tutorial=false){const route=createRoute();return {route,choice:0,nearMisses:0,phase:tutorial?'tutorial':'playing',tutorial,level:0,visual:0,moves:0,slips:0,early:0,failStreak:0,elapsed:0,charging:false,held:0,cooldown:0,activeMemory:-1,shown:[],cards:tutorial?[]:createMemories(),seenCount:0,ended:false,holdSerial:0,
+export function newRun(tutorial=false){const route=createRoute();return {route,choice:0,nearMisses:0,phase:tutorial?'tutorial':'playing',tutorial,level:0,visual:0,moves:0,slips:0,early:0,failStreak:0,elapsed:0,charging:false,held:0,cooldown:0,activeMemory:-1,shown:[],completed:[],cards:tutorial?[]:createMemories(),seenCount:0,ended:false,holdSerial:0,
   motion:'idle',motionTime:0,activeHand:'right',supportingHand:'left',handHolds:{left:0,right:0},
   aim:grip(route.nodes[1],'right'),inputMode:'keyboard',balance:0,pressSerial:0,chargeAtRelease:0,reachQuality:0,outcome:null,fromLevel:0,targetLevel:1,resting:false,restTime:0,restRequested:false,events:[]};}
 export function range(run){
@@ -34,7 +34,7 @@ export function releaseHold(run){
   return run.outcome;
 }
 function stage(run,name){run.motion=name;run.motionTime=0;}
-function stabilize(run){stage(run,'idle');run.cooldown=0;run.outcome=null;if(run.restRequested){run.restRequested=false;run.resting=true;}}
+function stabilize(run){stage(run,'idle');run.cooldown=0;run.outcome=null;if(run.level<(run.tutorial?2:COUNT))run.aim=targetGrip(run);if(run.restRequested){run.restRequested=false;run.resting=true;}}
 function advanceMotion(run,dt){
   run.motionTime+=dt;const t=run.motionTime;
   if(run.motion==='reach'&&t>=run.reachDuration){
@@ -78,6 +78,7 @@ export function tick(run,dt){
   if(run.level>=COUNT&&run.summitAt===undefined)run.summitAt=run.elapsed;
   const active=run.cards.findIndex(c=>run.elapsed>=c.at&&run.elapsed<c.at+EXPOSURE);run.activeMemory=active;
   if(active>=0&&!run.shown.includes(active)){run.shown.push(active);run.seenCount=run.shown.length;}
+  run.cards.forEach((card,index)=>{if(run.elapsed>=card.at+EXPOSURE&&!run.completed.includes(index))run.completed.push(index);});
   // Fast climbers stay at the summit until every scheduled image has played.
   const memoriesComplete=run.elapsed>=run.cards.at(-1).at+EXPOSURE;
   const expired=run.elapsed>=LIMIT;
