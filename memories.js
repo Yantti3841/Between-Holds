@@ -1,6 +1,6 @@
 // The same raster assets are used in exposure cards, answers and the recap.
 // Six forest moments: four mental calculations and two visual memories.
-export const EXPOSURE=5,QUIZ_COUNT=6;
+export const EXPOSURE=6.5,QUIZ_COUNT=6;
 export const MEMORY_OBJECTS=[
   {id:'umbrella',label:'雨伞'}, {id:'bird',label:'小鸟'},
   {id:'house',label:'小屋'}, {id:'flowers',label:'三朵白花'},
@@ -46,12 +46,13 @@ export function createMemories(){
   const n=Math.random()<.5?2:3,picture=quantity(countObject,n);
   cards.push({...picture,id:`count-${countObject}`,category:'quantity',question:`刚才的${objectLabel(countObject)}，是哪一组？`,
     alternatives:[picture,...[1,2,3].filter(x=>x!==n).map(x=>quantity(countObject,x))]});
-  return shuffle(cards).map((c,i)=>{
+  return shuffle(cards).map(c=>{
     const {alternatives,...card}=c;
-    return {...card,at:5+i*(EXPOSURE+3),choices:shuffle(alternatives.map((p,j)=>({...p,correct:j===0})))};
+    return {...card,at:null,until:null,side:Math.random()<.5?'left':'right',offset:[18,22,26][Math.floor(Math.random()*3)],choices:shuffle(alternatives.map((p,j)=>({...p,correct:j===0})))};
   });
 }
 export function quizFor(run){
-  return shuffle(run.cards.filter((c,i)=>run.shown.includes(i))).slice(0,QUIZ_COUNT)
+  const completed=run.completed||run.shown;
+  return shuffle(run.cards.filter((c,i)=>completed.includes(i))).slice(0,QUIZ_COUNT)
     .map(c=>({...c,memoryId:c.id,choices:shuffle(c.choices)}));
 }

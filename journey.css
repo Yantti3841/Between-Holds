@@ -51,3 +51,36 @@
 @media(max-width:600px){.route-clock{left:58%;top:9px;width:48px;min-height:54px;padding:5px 2px}.route-clock strong{font-size:27px}.route-clock small{font-size:7px;letter-spacing:0}.route-clock.summit strong{font-size:16px}.intro-copy{left:7%;right:7%;bottom:16%}.intro-copy h2{font-size:23px}.intro-copy>p:not(.english-label){font-size:11px}.calculation-card{padding:20px 8px 8px;gap:7px}.forest-equation{min-height:61px;padding:5px}.forest-equation .clear-pixel-text{--pixel-cell:3px;--pixel-gap:0px;gap:calc(var(--pixel-cell)*.5)}.question-picture{height:126px}.question-picture>img{width:100px;height:90px}.number-answer{min-height:90px}.number-answer .clear-pixel-text{--pixel-cell:6px}.demo-memory .clear-pixel-text{--pixel-cell:3px;--pixel-gap:0px}.demo-options .clear-pixel-text{--pixel-cell:3px;--pixel-gap:1px}.score .clear-pixel-text{--pixel-cell:11px;--pixel-gap:1px}}
 @media(prefers-reduced-motion:reduce){.memory-panel{transition:none}}
 @media(max-width:600px){.climb-header{right:12px;top:78px}.height-display{top:147px}.climb-header span{font-size:12px}.climb-header small{font-size:8px}}
+
+/* One continuous climbing scene; memories briefly appear beside the route. */
+.play{display:block}.climb-zone{width:100%;height:100%}
+.climb-header{right:145px}.route-clock{left:auto;right:30px;transform:none}
+.hold-guide{left:50%;bottom:9%;width:min(380px,80%);transform:translateX(-50%);padding:14px 20px;background:#153e3def;border:1px solid #8fbda08c;box-shadow:4px 4px 0 #123e3c35;text-align:center}
+.hold-guide>span{font-size:15px;font-weight:600;line-height:1.6;min-height:24px;margin:0 0 10px}
+.hold-guide>small{font-size:10px;letter-spacing:1px;margin-top:9px}
+.release-meter{height:18px;position:relative;background:#102f32;border:1px solid #8bbba4;overflow:visible}
+#release-zone{position:absolute;top:0;bottom:0;background:#79b98b;border-left:2px solid #d0e9b3;border-right:2px solid #d0e9b3}
+#release-fill{position:absolute;inset:0;background:#f3eed63b;transform:scaleX(0);transform-origin:left}
+#release-needle{position:absolute;top:-4px;bottom:-4px;width:3px;transform:translateX(-50%);background:#fff8dc;box-shadow:0 0 0 1px #173e3e}
+.hold-guide[data-charge="release"]{border-color:#c5ecad;background:#245442}.hold-guide[data-charge="release"]>span{color:#d5f6b7}.hold-guide[data-charge="release"] #release-zone{background:#a6dc8f}
+.hold-guide[data-charge="late"]{border-color:#ed8167}.hold-guide[data-charge="late"]>span{color:#f4af97}
+.rest-note{left:50%;bottom:10%;transform:translateX(-50%);width:min(340px,80%)}
+.memory-panel{position:absolute;z-index:3;left:calc(50% + 220px);right:auto;top:var(--memory-y,22%);width:clamp(270px,26vw,340px);padding:0;border:0;overflow:visible;background:none;color:#f5f3df;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s}
+.memory-panel[data-side="left"]{left:auto;right:calc(50% + 220px)}
+.memory-panel.has-memory{opacity:1;visibility:visible;transform:translateY(0)}
+.memory-panel .panel-brand,.memory-panel .panel-rule,.memory-panel>p,.memory-footer>p{display:none}
+.memory-panel h2{margin:0 0 9px;font-size:13px;letter-spacing:2px;background:#153e3dec;padding:8px 14px;border:1px solid #9bc5aa77}
+.memory-stage{flex:none;min-height:0;width:100%}.memory-card{max-width:none;width:100%;border:1px solid #a3c1a1;box-shadow:5px 5px 0 #123e3c44}
+.memory-footer{padding:11px 13px;margin-top:9px;background:#153e3de6;border:1px solid #9bc5aa55}
+#app[data-screen="intro"] .memory-panel{opacity:0;visibility:hidden}
+.demo-ready .demo-ring{background:#a6dc8f;filter:drop-shadow(0 0 5px #a6dc8f66)}
+.demo-ready .demo-keyboard-button,.demo-ready .demo-pad-button{background:#c9eab0;border-color:#87b67b}
+.demo-release .demo-ring{background:#a6dc8f;filter:none}
+.demo-stick{display:none}
+.demo-charge-track{position:absolute;left:20px;top:22px;width:120px;height:15px;background:#102f32;border:1px solid #8bbba4}.demo-charge-track i{position:absolute;left:50%;width:35%;top:0;bottom:0;background:#a6dc8f}.demo-charge-track b{position:absolute;left:calc(var(--charge)*100%);top:-4px;bottom:-4px;width:3px;background:#fff8dc}
+@media(min-width:601px) and (max-width:1100px){.memory-panel{width:clamp(220px,25vw,275px);left:calc(50% + 170px)}.memory-panel[data-side="left"]{left:auto;right:calc(50% + 170px)}}
+@media(max-width:600px){.climb-header{left:12px;right:82px;top:19px}.height-display{top:94px}.route-clock{left:auto;right:12px;top:14px}.hold-guide{bottom:9%;width:82%;padding:10px 14px}.hold-guide>span{font-size:13px}.climb-foot{bottom:12px}.memory-panel{width:calc(50vw - 74px);left:calc(50% + 62px);top:20%}.memory-panel[data-side="left"]{left:auto;right:calc(50% + 62px)}.memory-panel h2{font-size:9px;letter-spacing:0;padding:6px 4px;margin-bottom:5px}.memory-card{padding:8px}.calculation-card{padding:18px 6px 6px;gap:5px}.forest-equation{min-height:36px;padding:3px;border-width:2px;box-shadow:2px 2px 0 #b1c4aa}.forest-equation .clear-pixel-text{--pixel-cell:2px;--pixel-gap:0px;gap:1px}.forest-equation:before,.forest-equation:after{top:-8px;height:8px}.memory-footer{padding:7px;margin-top:6px}.memory-dots{gap:6px}.memory-dots i{width:4px;height:4px}.calculation-card .card-number{font-size:8px;top:4px;left:5px}}
+@media(max-height:600px) and (min-width:601px){.memory-panel{width:min(230px,calc(50vw - 190px),calc(100vh - 160px));top:16%;left:calc(50% + 174px)}.memory-panel[data-side="left"]{left:auto;right:calc(50% + 174px)}.memory-panel .calculation-card{padding:20px 10px 9px;gap:7px}.memory-panel .forest-equation{min-height:63px}.memory-panel .clear-pixel-text{--pixel-cell:3px;--pixel-gap:0px}.hold-guide{bottom:9%;padding:8px 14px;width:min(340px,78%)}.hold-guide>span{font-size:13px;margin-bottom:7px}.hold-guide>small{margin-top:6px}}
+@media(max-width:600px){.height-display{top:64px}.memory-panel{top:13%;left:auto;right:12px;width:min(180px,43vw)}.memory-panel[data-side="left"]{right:auto;left:12px}.memory-panel h2{display:none}.memory-footer{padding:5px;margin-top:5px}.memory-panel .forest-equation .clear-pixel-text{--pixel-cell:3px;--pixel-gap:0px;gap:0}}
+@media(max-width:600px) and (max-height:650px){.memory-panel{top:88px}.memory-panel .memory-card{aspect-ratio:1.5}.memory-panel .forest-equation .clear-pixel-text{--pixel-cell:2px}}
+@media(max-width:360px){.forest-equation .clear-pixel-text{gap:0}}

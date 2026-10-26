@@ -1,6 +1,6 @@
 // Shared tuning for input, articulated motion, camera and sound.
 export const CLIMB = Object.freeze({
-  chargeDuration: 1.55, minCharge: .46, goodWindow: .64, overholdGrace: .08,
+  chargeDuration: 1.9, minCharge: .46, goodWindow: .88, overholdGrace: .08,
   reachDuration: .38, grabDuration: .18, bodyDuration: .95,
   feetDuration: .62, settleDuration: .62, recoverDuration: .32, fallDuration: .46,
   playerHeight: 120, normalReachDistance: [.45,.65], challengeReachDistance: [.65,.85], cruxReachDistance: [.85,1.05],

@@ -45,8 +45,8 @@ export class World{
     this.w=innerWidth;this.h=innerHeight;const d=Math.min(devicePixelRatio||1,2);this.canvas.width=this.w*d;this.canvas.height=this.h*d;this.ctx.setTransform(d,0,0,d,0,0);
   }
   reset(run){this.run=run;this.camera=0;this.cameraX=0;this.zoom=1;this.lookTime=0;this.looked.clear();this.position=0;this.pointer=null;this.rig.reset(run);}
-  layout(){const w=this.w,h=this.h,split=w<=600?.58:w<=900?.64:.68;return {width:w*split,scale:Math.max(.52,Math.min(1.5,h/550,w/800))*this.zoom,anchor:h*.43};}
-  toScreen(p){const l=this.layout();return {x:l.width*.67+(p.x-this.cameraX)*l.scale,y:l.anchor+(p.y+this.camera)*l.scale};}
+  layout(){const w=this.w,h=this.h,scale=w<=600?Math.min(1.15,h/620,w/360):Math.max(.6,Math.min(2,h/450,w/650));return {width:w,scale:scale*this.zoom,anchor:h*(w<=600?(h<=650?.5:.54):h<550?.35:.4)};}
+  toScreen(p){const l=this.layout();return {x:l.width*.5+(p.x-this.cameraX)*l.scale,y:l.anchor+(p.y+this.camera)*l.scale};}
   targetScreen(){return this.toScreen(this.run?targetGrip(this.run):{x:0,y:0});}
   visible(){return this.run?visibleRocks(this.run,this.total).filter(p=>{const s=this.toScreen(p);return s.y>-20&&s.y<this.h+20;}):[];}
   aimAt(x,y,keyboard=false){
@@ -62,22 +62,22 @@ export class World{
     if(play&&this.run){
       // A single continuous panorama replaces the rectangular cliff overlay.
       // It shares the holds' world transform: no seam, tiling or texture sliding.
-      const baseScale=this.layout().scale/this.zoom,pad=width*.08,drawWidth=width+pad*2;
+      const baseScale=this.layout().scale/this.zoom,pad=width*.08,drawWidth=width+pad*2,sceneX=-pad-width*.17;
       const routeHeight=-this.run.route.nodes.at(-1).y;
       const drawHeight=Math.max(h+routeHeight*baseScale+180,drawWidth*a.cliff.height/a.cliff.width),y=h+80-drawHeight;
-      c.save();c.translate(width*.67,h*.43);c.scale(this.zoom,this.zoom);
-      c.translate(-width*.67-this.cameraX*baseScale,-h*.43+this.camera*baseScale);
+      c.save();c.translate(width*.5,h*.43);c.scale(this.zoom,this.zoom);
+      c.translate(-width*.5-this.cameraX*baseScale,-h*.43+this.camera*baseScale);
       // Static outpaint outside the playable area. Always cover its left half
       // with the exact original, so generation cannot move any game landmark.
       // Both images share world coordinates in intro AND play; no crossfade.
       c.imageSmoothingEnabled=false;
-      c.drawImage(a.extension,-pad,y,drawWidth*2,drawHeight);
+      c.drawImage(a.extension,sceneX,y,drawWidth*2,drawHeight);
       const core=a.cliff.width-a.cliffEdge.width,coreWidth=drawWidth*core/a.cliff.width;
-      c.drawImage(a.cliff,0,0,core,a.cliff.height,-pad,y,coreWidth,drawHeight);
-      c.drawImage(a.cliffEdge,-pad+coreWidth,y,drawWidth-coreWidth,drawHeight);
+      c.drawImage(a.cliff,0,0,core,a.cliff.height,sceneX,y,coreWidth,drawHeight);
+      c.drawImage(a.cliffEdge,sceneX+coreWidth,y,drawWidth-coreWidth,drawHeight);
       if(!this.reduced){c.fillStyle='#e4fff51c';for(let i=0;i<4;i++){
         const flow=(this.motion*(.075+i*.008)+i*.27)%1;
-        c.fillRect(Math.round(-pad+drawWidth*(.350+i*.009)),Math.round(y+drawHeight*(.812+flow*.059)),2,4+i%2*2);
+        c.fillRect(Math.round(sceneX+drawWidth*(.350+i*.009)),Math.round(y+drawHeight*(.812+flow*.059)),2,4+i%2*2);
       }}c.restore();
     }else c.drawImage(a.forest,0,0,width,h+35);
     if(!play&&!this.reduced){
@@ -124,13 +124,13 @@ export class World{
     // The panel fades over it; neither the panorama nor the actor reflows.
     if(this.state==='intro'&&!this.reduced){
       const t=clamp(this.introProgress*5.6/3.2),ease=t*t*(3-2*t),z=.92+.08*ease;
-      c.translate(width*.67,h*.43);c.scale(z,z);c.translate(-width*.67,-h*.43);
+      c.translate(width*.5,h*.43);c.scale(z,z);c.translate(-width*.5,-h*.43);
     }
     this.environment(c,width,h,play,dt);
     if(play&&this.run){
       const run=this.run,target=targetGrip(run),distance=Math.hypot(run.aim.x-target.x,run.aim.y-target.y);
       this.hover=damp(this.hover,distance<hitRadius(target)?1:0,9,this.paused?0:dt);
-      const l=this.layout();c.save();c.translate(width*.67-this.cameraX*l.scale,l.anchor+this.camera*l.scale);c.scale(l.scale,l.scale);c.imageSmoothingEnabled=false;
+      const l=this.layout();c.save();c.translate(width*.5-this.cameraX*l.scale,l.anchor+this.camera*l.scale);c.scale(l.scale,l.scale);c.imageSmoothingEnabled=false;
       for(const p of visibleRocks(run,this.total)){
         const n=p.level,current=['idle','charge'].includes(run.motion)&&n===run.level+1&&p.side===run.activeHand,size=CLIMB.holdScale[p.size];
         const screenY=l.anchor+(p.y+this.camera)*l.scale;
@@ -150,10 +150,10 @@ export class World{
       this.rig.draw(c,a.head,a.backpack);
       if(run.level<this.total&&!run.resting){
         const r=range(run),good=run.charging&&run.held>=r.low&&run.held<=r.high;
-        c.strokeStyle=good?'#fff7d5':`rgba(235,244,215,${.28+this.hover*.32})`;c.lineWidth=good?1.8:1;
+        c.strokeStyle=good?'#a4ebac':run.charging&&run.held>r.high?'#ed8167':`rgba(235,244,215,${.28+this.hover*.32})`;c.lineWidth=good?3:1;
         if(run.charging){
           c.beginPath();c.arc(target.x,target.y,24,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(run.held/((r.low+r.high)*.5)));c.stroke();
-          if(good){c.fillStyle='#fff7d5';c.fillRect(target.x-1,target.y-31,2,2);}
+          if(good){c.beginPath();c.arc(target.x,target.y,26,0,Math.PI*2);c.stroke();}
         }else if(run.motion==='idle'){c.beginPath();c.arc(target.x,target.y,23,-2.5,-.7);c.stroke();}
       }
       c.restore();

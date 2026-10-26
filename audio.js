@@ -42,8 +42,10 @@ export class Sound {
     source.start(at,Math.random());source.stop(at+duration+.02);source.onended=()=>{source.disconnect();filter.disconnect();g.disconnect();};
   }
   ui(kind='click'){
-    if(!this.ctx||this.hidden)return;const now=this.ctx.currentTime;if(kind==='hover'&&now-this.lastHover<.15)return;this.lastHover=now;
+    if(!this.ctx||this.hidden)return;const now=this.ctx.currentTime;if(['hover','switch'].includes(kind)&&now-this.lastHover<.12)return;this.lastHover=now;
     this.played['ui-'+kind]=(this.played['ui-'+kind]||0)+1;
+    if(kind==='switch'){this.tone(520,.055,.085);this.tone(650,.025,.08,.025);return;}
+    if(kind==='back'){this.tone(360,.05,.12);this.tone(270,.035,.16,.035);return;}
     this.tone(kind==='hover'?440:330,kind==='hover'?.019:.065,kind==='hover'?.085:.15);
     if(kind!=='hover')this.tone(495,.025,.2,.025);
   }

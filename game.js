@@ -66,6 +66,20 @@ function advanceMotion(run,dt){
   }
   else if(run.motion==='cancel'&&t>=.32){stabilize(run);}
 }
+function advanceMemories(run){
+  const critical=run.charging&&run.held>=range(run).low-.18;
+  if(run.activeMemory>=0){
+    const card=run.cards[run.activeMemory];
+    if(run.elapsed-card.at>=EXPOSURE&&!critical){card.until=run.elapsed;run.completed.push(run.activeMemory);run.activeMemory=-1;}
+  }
+  if(run.activeMemory>=0||run.shown.length===run.cards.length)return;
+  const index=run.shown.length,previous=run.cards[index-1],earliest=previous?previous.until+1:3;
+  if(run.elapsed<earliest||run.charging||['reach','fall'].includes(run.motion))return;
+  const climbing=run.outcome==='success'&&['grab','pull','feet','settle'].includes(run.motion);
+  const idle=run.motion==='idle'&&run.elapsed>=earliest+.8;
+  const latest=LIMIT-4-EXPOSURE-(run.cards.length-index-1)*(EXPOSURE+1);
+  if(climbing||idle||run.elapsed>=latest){run.cards[index].at=run.elapsed;run.activeMemory=index;run.shown.push(index);run.seenCount=run.shown.length;}
+}
 export function tick(run,dt){
   if(run.ended)return {};
   run.events=[];
@@ -76,11 +90,9 @@ export function tick(run,dt){
   advanceMotion(run,dt);
   if(run.tutorial)return {outcome,finish:run.level>=2&&run.motion==='idle'};
   if(run.level>=COUNT&&run.summitAt===undefined)run.summitAt=run.elapsed;
-  const active=run.cards.findIndex(c=>run.elapsed>=c.at&&run.elapsed<c.at+EXPOSURE);run.activeMemory=active;
-  if(active>=0&&!run.shown.includes(active)){run.shown.push(active);run.seenCount=run.shown.length;}
-  run.cards.forEach((card,index)=>{if(run.elapsed>=card.at+EXPOSURE&&!run.completed.includes(index))run.completed.push(index);});
+  advanceMemories(run);
   // Fast climbers stay at the summit until every scheduled image has played.
-  const memoriesComplete=run.elapsed>=run.cards.at(-1).at+EXPOSURE;
+  const memoriesComplete=run.completed.length===run.cards.length;
   const expired=run.elapsed>=LIMIT;
   const finish=expired||(run.motion==='idle'&&run.level>=COUNT&&memoriesComplete);
   if(finish)run.climbResult=run.summitAt!==undefined?'success':'timeout';
